@@ -1,0 +1,11 @@
+[
+    {
+        "timestamp": "2025-11-29 22:55",
+        "drug": "Fentanyl",
+        "amount": 1,
+        "location": "35",
+        "user": "HA01",
+        "old_balance": 36,
+        "new_balance": 45
+    }
+]

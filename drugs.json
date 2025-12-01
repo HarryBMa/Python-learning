@@ -1,0 +1,32 @@
+[
+    {
+        "name": "Fentanyl",
+        "concentration": "50 \u03bcg/ml",
+        "balance": 45
+    },
+    {
+        "name": "Sufentanil",
+        "concentration": "5 \u03bcg/ml",
+        "balance": 23
+    },
+    {
+        "name": "Ketalar",
+        "concentration": "50 mg/ml",
+        "balance": 8
+    },
+    {
+        "name": "Morfin",
+        "concentration": "10 mg/ml",
+        "balance": 24
+    },
+    {
+        "name": "Remifentanil",
+        "concentration": "5 mg",
+        "balance": 15
+    },
+    {
+        "name": "Remifentanil",
+        "concentration": "2mg",
+        "balance": 26
+    }
+]
