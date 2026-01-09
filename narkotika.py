@@ -17,20 +17,38 @@ def save_data(drugs, transactions):
 		json.dump(transactions, t, indent=4)
 
 def load_data():
-	"""Load drugs and transactions from JSON files"""
-	if os.path.exists("drugs.json", "transactions.json"):
-		# Files exists - load them
-		with open("drugs.json", "r") as d, open("transactions.json", "r") as t:
-			data = json.load(d, t)
-	else:
-		# File doesn't exist - use defaults
-		data = []
+    """Load drugs and transactions from JSON files"""
+    
+    # Load drugs
+    if os.path.exists("drugs.json"):
+        with open("drugs.json", "r") as d:
+            drugs = json.load(d)
+    else:
+        # Use default drugs
+        drugs = [
+            {"name": "Fentanyl", "concentration": "50 μg/ml", "balance": 36},
+            {"name": "Sufentanil", "concentration": "5 μg/ml", "balance": 23},
+            {"name": "Ketalar", "concentration": "50 mg/ml", "balance": 8},
+            {"name": "Morfin", "concentration": "10 mg/ml", "balance": 24},
+            {"name": "Remifentanil", "concentration": "5 mg", "balance": 15},
+            {"name": "Remifentanil", "concentration": "2mg", "balance": 26},
+        ]
+    
+    # Load transactions
+    if os.path.exists("transactions.json"):
+        with open("transactions.json", "r") as t:
+            transactions = json.load(t)
+    else:
+        # Start with empty transaction list
+        transactions = []
+    
+    return drugs, transactions
        
 def show_drug_list(drugs):
     """Display all drugs with their numbers"""
     print("\n=== TILLGÄNGLIGA PREPARAT ===")
     for index, drug in enumerate(drugs, start=1):
-        print(f"{index}. {drug['name']} - {drug['balance']} amp")
+        print(f"{index}. {drug['name']} {drug['concentration']} - {drug['balance']} amp")
     print()
 
 def show_transaction_list(transactions):
@@ -78,16 +96,9 @@ def deposit_drugs():
     pass
     
 # DICTIONARIES as a LIST
-drugs = [
-    {"name": "Fentanyl", "concentration": "50 μg/ml", "balance": 36},
-    {"name": "Sufentanil", "concentration": "5 μg/ml", "balance": 23},
-    {"name": "Ketalar", "concentration": "50 mg/ml", "balance": 8},
-    {"name": "Morfin", "concentration": "10 mg/ml", "balance": 24},
-    {"name": "Remifentanil", "concentration": "5 mg", "balance": 15},
-    {"name": "Remifentanil", "concentration": "2mg", "balance": 26},
-]
 
-transactions = []
+# Load data from files (or use defaults if files don't exist)
+drugs, transactions = load_data()
 
 user_input = input("Skriv ditt HSA-ID: ").upper()
 
