@@ -21,4 +21,11 @@ class Drug:
             return False
         self.balance -= amount
         return True
-        
+    
+    def deposit(self, amount):
+        """Add amount to balance. Returns True if successful."""
+        if amount < 0:
+            print(f"Fel: Kan inte sätta in ett negativt belopp: {amount} amp.")
+            return False
+        self.balance += amount
+        return True        
