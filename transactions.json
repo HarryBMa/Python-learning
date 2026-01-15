@@ -52,5 +52,14 @@
         "user": "HA01",
         "old_balance": 8,
         "new_balance": 6
+    },
+    {
+        "timestamp": "2026-01-15 17:46",
+        "drug": "Fentanyl",
+        "amount": 2,
+        "location": "sal 1",
+        "user": "HA01",
+        "old_balance": 32,
+        "new_balance": 30
     }
 ]

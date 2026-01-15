@@ -65,7 +65,14 @@ def save_data(drugs, transactions):
 
 def load_data():
     """Load drugs and transactions from JSON files"""
-    
+    DEFAULT_DRUGS = [
+            {"name": "Fentanyl", "concentration": "50 μg/ml", "balance": 36},
+            {"name": "Sufentanil", "concentration": "5 μg/ml", "balance": 23},
+            {"name": "Ketalar", "concentration": "50 mg/ml", "balance": 8},
+            {"name": "Morfin", "concentration": "10 mg/ml", "balance": 24},
+            {"name": "Remifentanil", "concentration": "5 mg", "balance": 15},
+            {"name": "Remifentanil", "concentration": "2mg", "balance": 26},
+        ]
     # Load drugs
     if os.path.exists("drugs.json"):
         try:
@@ -73,45 +80,18 @@ def load_data():
                 drugs = json.load(d)   # read drugs from file in JSON format (load=read)
         except json.JSONDecodeError:
             print("Gick inte att läsa från fil: återställer till standardvärden")
-            drugs = [
-            {"name": "Fentanyl", "concentration": "50 μg/ml", "balance": 36},
-            {"name": "Sufentanil", "concentration": "5 μg/ml", "balance": 23},
-            {"name": "Ketalar", "concentration": "50 mg/ml", "balance": 8},
-            {"name": "Morfin", "concentration": "10 mg/ml", "balance": 24},
-            {"name": "Remifentanil", "concentration": "5 mg", "balance": 15},
-            {"name": "Remifentanil", "concentration": "2mg", "balance": 26},
-        ]
+            drugs = DEFAULT_DRUGS
         except FileNotFoundError:
             print("Fil hittades inte: återställer till standardvärden")
-            drugs = [
-            {"name": "Fentanyl", "concentration": "50 μg/ml", "balance": 36},
-            {"name": "Sufentanil", "concentration": "5 μg/ml", "balance": 23},
-            {"name": "Ketalar", "concentration": "50 mg/ml", "balance": 8},
-            {"name": "Morfin", "concentration": "10 mg/ml", "balance": 24},
-            {"name": "Remifentanil", "concentration": "5 mg", "balance": 15},
-            {"name": "Remifentanil", "concentration": "2mg", "balance": 26},
-        ]
+            drugs = DEFAULT_DRUGS
         except PermissionError:
             print("Ingen behörighet att läsa fil: återställer till standardvärden")
-            drugs = [
-            {"name": "Fentanyl", "concentration": "50 μg/ml", "balance": 36},
-            {"name": "Sufentanil", "concentration": "5 μg/ml", "balance": 23},
-            {"name": "Ketalar", "concentration": "50 mg/ml", "balance": 8},
-            {"name": "Morfin", "concentration": "10 mg/ml", "balance": 24},
-            {"name": "Remifentanil", "concentration": "5 mg", "balance": 15},
-            {"name": "Remifentanil", "concentration": "2mg", "balance": 26},
-        ]
+            drugs = DEFAULT_DRUGS
+
     else:
         # Use default drugs
-        drugs = [
-            {"name": "Fentanyl", "concentration": "50 μg/ml", "balance": 36},
-            {"name": "Sufentanil", "concentration": "5 μg/ml", "balance": 23},
-            {"name": "Ketalar", "concentration": "50 mg/ml", "balance": 8},
-            {"name": "Morfin", "concentration": "10 mg/ml", "balance": 24},
-            {"name": "Remifentanil", "concentration": "5 mg", "balance": 15},
-            {"name": "Remifentanil", "concentration": "2mg", "balance": 26},
-        ]
-    
+        drugs = DEFAULT_DRUGS
+            
     # Load transactions
     if os.path.exists("transactions.json"):
         try:
@@ -199,39 +179,37 @@ if user_input in authorized_users:
                 if amount_taken is None:
                     continue
                 else:
-                    if amount_taken > selected_drug["balance"]:
-                        print(f"Uttag för stort! Det finns bara {selected_drug['balance']} amp kvar.")
-                
+                    
+                    # withdraw_drugs
+                    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M")
+                    old_balance = selected_drug["balance"]
+                    selected_drug["balance"] -= amount_taken
+                    location = str(input("till: "))
+                    new_balance = selected_drug["balance"]
+                    
+                    # audit
+                    audit_count = get_int_input("Antal för kontrollräkning: ", min_value=0) # Ensure non-negative audit count
+                    should_log = False  # Flag to determine if we should log the transaction
+                    if audit_count is None:
+                        # User chose to abort
+                        selected_drug["balance"] = old_balance
+                        print("Uttag avbrutet, räkna om?")
+                        continue
+                    if new_balance == audit_count:
+                        print("✓ Kontrollräkning stämmer!")
+                        should_log = True
                     else:
-                        # withdraw_drugs
-                        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M")
-                        old_balance = selected_drug["balance"]
-                        selected_drug["balance"] -= amount_taken
-                        location = str(input("till: "))
-                        new_balance = selected_drug["balance"]
-                        
-                        # audit
-                        audit_count = get_int_input("Antal för kontrollräkning: ", min_value=0) # Ensure non-negative audit count
-                        should_log = False  # Flag to determine if we should log the transaction
-                        if audit_count is None:
-                            # User chose to abort
+                        print(f"⚠️ AVVIKELSE! System: {new_balance}, Räknat: {audit_count}")
+                        accept_audit = input("Acceptera avvikelse? (j/n): ").lower()
+                        if accept_audit == 'j':
+                            selected_drug["balance"] = audit_count # Update balance to audit count
+                            new_balance = audit_count # Update new_balance to audit count
+                            should_log = True
+                        else:
                             selected_drug["balance"] = old_balance
                             print("Uttag avbrutet, räkna om?")
                             continue
-                        if new_balance == audit_count:
-                            print("✓ Kontrollräkning stämmer!")
-                            should_log = True
-                        else:
-                            print(f"⚠️ AVVIKELSE! System: {new_balance}, Räknat: {audit_count}")
-                            accept_audit = input("Acceptera avvikelse? (j/n): ").lower()
-                            if accept_audit == 'j':
-                                selected_drug["balance"] = audit_count # Update balance to audit count
-                                new_balance = audit_count # Update new_balance to audit count
-                                should_log = True
-                            else:
-                                selected_drug["balance"] = old_balance
-                                print("Uttag avbrutet, räkna om?")
-                                
+                        
                     # Log transaction
                     if should_log:
                         transaction = {
