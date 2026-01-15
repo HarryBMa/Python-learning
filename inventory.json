@@ -2,17 +2,17 @@
     {
         "name": "Fentanyl",
         "concentration": "50 \u03bcg/ml",
-        "balance": 30
+        "balance": 36
     },
     {
         "name": "Sufentanil",
         "concentration": "5 \u03bcg/ml",
-        "balance": 10
+        "balance": 23
     },
     {
         "name": "Ketalar",
         "concentration": "50 mg/ml",
-        "balance": 6
+        "balance": 8
     },
     {
         "name": "Morfin",
