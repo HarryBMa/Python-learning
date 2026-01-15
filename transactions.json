@@ -1,1 +1,11 @@
-[]
+[
+    {
+        "timestamp": "2026-01-15 20:17",
+        "drug": "Fentanyl",
+        "amount": 3,
+        "location": "hs",
+        "user": "HA01",
+        "old_balance": 36,
+        "new_balance": 33
+    }
+]

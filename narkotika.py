@@ -76,23 +76,23 @@ def handle_withdrawal(inventory, transactions, hsa_id, choice):
                 print("Uttag avbrutet, räkna om?")
                 return inventory, transactions
         
-            # Log transaction
-            if should_log:
-                transaction = {
-                    "timestamp": timestamp,
-                    "drug": selected_drug["name"],
-                    "amount": amount_taken,
-                    "location": location,
-                    "user": hsa_id,
-                    "old_balance": old_balance,
-                    "new_balance": new_balance,}
-                transactions.append(transaction)
-                save_data(inventory, transactions)
-                # Print confirmation
-                print(f"\n✓ REGISTRERAT")
-                print(f"{selected_drug['name']}: {old_balance} → {new_balance} amp")
-                print(f"Tid: {timestamp}")
-                print(f"Till: {location}\n")
+        # Log transaction
+        if should_log:
+            transaction = {
+                "timestamp": timestamp,
+                "drug": selected_drug["name"],
+                "amount": amount_taken,
+                "location": location,
+                "user": hsa_id,
+                "old_balance": old_balance,
+                "new_balance": new_balance,}
+            transactions.append(transaction)
+            save_data(inventory, transactions)
+            # Print confirmation
+            print(f"\n✓ REGISTRERAT")
+            print(f"{selected_drug['name']}: {old_balance} → {new_balance} amp")
+            print(f"Tid: {timestamp}")
+            print(f"Till: {location}\n")
     return inventory, transactions
 
 def save_data(inventory, transactions):
