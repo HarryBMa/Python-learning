@@ -16,10 +16,13 @@ def get_int_input(prompt, min_value=None, max_value=None):
             if max_value is not None and value > max_value:
                 print(f"Värdet får inte överstiga {max_value}. Försök igen.")
                 continue
-            return value
+
         except ValueError:
             print("Ogiltigt värde. Ange ett heltal.")
-
+        
+        else:
+            print(f"Inmatat värde: {value}") 
+            return value
 # VARIABLES
 # Store single values (`name = "Fentanyl"`)
 
@@ -30,17 +33,27 @@ authorized_users = ["HA01", "HA02", "MA15", "JK22"]
 def save_data(drugs, transactions):
     """Save drugs and transactions to JSON files"""
     with open("drugs.json", "w") as d: # open file for writing
-        json.dump(drugs, d, indent=4) # write drugs to file in JSON format
+        try:
+            json.dump(drugs, d, indent=4) # write drugs to file in JSON format
+        except Exception as e:
+            print("Gick inte att spara till fil:", e)
+
     with open("transactions.json", "w") as t: # open file for writing
-        json.dump(transactions, t, indent=4) # write transactions to file in JSON format (dump=write)
+        try:
+            json.dump(transactions, t, indent=4) # write transactions to file in JSON format (dump=write)
+        except Exception as e:
+            print("Gick inte att spara till fil:", e)
 
 def load_data():
     """Load drugs and transactions from JSON files"""
     
     # Load drugs
     if os.path.exists("drugs.json"):
-        with open("drugs.json", "r") as d: # open file for reading
-            drugs = json.load(d)   # read drugs from file in JSON format (load=read)
+        try:
+            with open("drugs.json", "r") as d: # open file for reading
+                drugs = json.load(d)   # read drugs from file in JSON format (load=read)
+        except Exception as e:
+            print("Gick inte att läsa från fil:", e)
     else:
         # Use default drugs
         drugs = [
@@ -54,8 +67,11 @@ def load_data():
     
     # Load transactions
     if os.path.exists("transactions.json"):
-        with open("transactions.json", "r") as t:
-            transactions = json.load(t)
+        try:
+            with open("transactions.json", "r") as t:
+                transactions = json.load(t)
+        except Exception as e:
+            print("Gick inte att läsa från fil:", e)
     else:
         # Start with empty transaction list
         transactions = []
@@ -95,32 +111,6 @@ Saldo: {drug['balance']} ampuller
 """)
 
 
-def withdraw_drugs():
-    """Withdraw input amount from selected drug"""
-    # old_balance = selected_drug["balance"]
-    # selected_drug["balance"] -= amount_taken
-    # if old_balance > 0:
-    #     new_balance = selected_drug["balance"]
-    #     transaction = {
-    #         "timestamp": timestamp,
-    #         "drug": selected_drug["name"],
-    #         "amount": amount_taken,
-    #         "location": location,
-    #         "user": user_input,
-    #         "old_balance": old_balance,
-    #         "new_balance": new_balance,}
-    #     transactions.append(transaction)
-    # else:
-    #     print("Uttag för stort")
-    pass
-    pass
-
-
-def deposit_drugs():
-    """Deposit input amount to selected drug"""
-    pass
-
-
 # DICTIONARIES as a LIST
 
 # Load data from files (or use defaults if files don't exist)
@@ -139,15 +129,15 @@ if user_input in authorized_users:
         print("3. Fyll på")
         print("4. Logga ut")
 
-        menu_choice = str(get_int_input("Välj: ", 1, 4)) # Ensure valid menu choice between 1 and 4
-        if menu_choice == "1":
+        menu_choice = get_int_input("Välj: ", 1, 4) # Ensure valid menu choice between 1 and 4
+        if menu_choice == 1:
             show_drug_list(drugs)
             choice = get_int_input(f"Välj preparat (1 - {len(drugs)}): ", 1, len(drugs)) - 1
             
             if 0 <= choice < len(drugs):
                 selected_drug = drugs[choice]
                 show_drug_details(selected_drug)
-                amount_taken = get_int_input("Antal amp att ta ut: ", min_value=1) # Ensure at least 1 amp is taken
+                amount_taken = get_int_input("Antal amp att ta ut: ", min_value=1, max_value=selected_drug["balance"]) # Ensure at least 1 amp is taken and not more than balance
             
                 if amount_taken > selected_drug["balance"]:
                     print(f"Uttag för stort! Det finns bara {selected_drug['balance']} amp kvar.")
@@ -171,8 +161,8 @@ if user_input in authorized_users:
                         print(f"⚠️ AVVIKELSE! System: {new_balance}, Räknat: {audit_count}")
                         accept_audit = input("Acceptera avvikelse? (j/n): ").lower()
                         if accept_audit == 'j':
-                            selected_drug["balance"] = audit_count
-                            new_balance = audit_count
+                            selected_drug["balance"] = audit_count # Update balance to audit count
+                            new_balance = audit_count # Update new_balance to audit count
                             should_log = True
                         else:
                             selected_drug["balance"] = old_balance
@@ -195,11 +185,11 @@ if user_input in authorized_users:
                         print(f"{selected_drug['name']}: {old_balance} → {new_balance} amp")
                         print(f"Tid: {timestamp}")
                         print(f"Till: {location}\n")
-        elif menu_choice == "2":
+        elif menu_choice == 2:
             show_transaction_list(transactions)
-        elif menu_choice == "3":
+        elif menu_choice == 3:
             show_drug_list(drugs)
-            choice = int(input(f"Välj preparat (1 - {len(drugs)}): ")) - 1
+            choice = get_int_input(f"Välj preparat (1 - {len(drugs)}): ", 1, len(drugs)) - 1 # Adjust for 0-based index and ensure valid choice
             if 0 <= choice < len(drugs):
                 selected_drug = drugs[choice]
                 show_drug_details(selected_drug)
@@ -207,7 +197,7 @@ if user_input in authorized_users:
                 selected_drug["balance"] += amount_added
                 save_data(drugs, transactions)
                 print(f"{selected_drug['name']} har uppdaterats till {selected_drug['balance']} amp.")
-        elif menu_choice == "4":
+        elif menu_choice == 4:
             running = False
             save_data(drugs, transactions)
             print("Utloggad!")
