@@ -18,12 +18,12 @@ def get_int_input(prompt, min_value=None, max_value=None):
         choice = get_int_input("Choose an option (1-5): ", 1, 5)
         """
     while True:
-        user_input = input(prompt)
-        if user_input.lower() == "q":
+        hsa_id = input(prompt)
+        if hsa_id.lower() == "q":
             print("Avbryter inmatning.")
             return None
         try:
-            value: int = int(user_input)
+            value: int = int(hsa_id)
             if min_value is not None and value < min_value:
                 print(f"Värdet måste vara minst {min_value}. Försök igen.")
                 continue
@@ -33,16 +33,67 @@ def get_int_input(prompt, min_value=None, max_value=None):
         except ValueError:
             print("Ogiltigt värde. Ange ett heltal.")
         else:
-            print(f"Inmatat värde: {value}") 
+            # print(f"Inmatat värde: {value}") # for debugging
             return value
         
-def handle_withdrawal(inventory, transactions, hsa_id):
+def handle_withdrawal(inventory, transactions, hsa_id, choice):
     """Handle the withdrawal process including updating balances and logging."""
-    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M")
-    old_balance = selected_drug["balance"]
-    selected_drug["balance"] -= amount_taken
-    location = str(input("till: "))
-    new_balance = selected_drug["balance"]
+    choice = choice - 1  # Adjust for 0-based index
+
+    if 0 <= choice < len(inventory):
+        selected_drug = inventory[choice]
+        show_drug_details(selected_drug)
+        amount_taken = get_int_input("Antal amp att ta ut (eller Q för att avbryta): ", min_value=1, max_value=selected_drug["balance"]) # Ensure at least 1 amp is taken and not more than balance
+    
+        if amount_taken is None:
+            return inventory, transactions
+        # withdraw_drugs
+        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M")
+        old_balance = selected_drug["balance"]
+        selected_drug["balance"] -= amount_taken
+        location = str(input("till: "))
+        new_balance = selected_drug["balance"]
+        # audit
+        audit_count = get_int_input("Antal för kontrollräkning: ", min_value=0) # Ensure non-negative audit count
+        should_log = False  # Flag to determine if we should log the transaction
+        if audit_count is None:
+            # User chose to abort
+            selected_drug["balance"] = old_balance
+            print("Uttag avbrutet, räkna om?")
+            return inventory, transactions
+        if new_balance == audit_count:
+            print("✓ Kontrollräkning stämmer!")
+            should_log = True
+        else:
+            print(f"⚠️ AVVIKELSE! System: {new_balance}, Räknat: {audit_count}")
+            accept_audit = input("Acceptera avvikelse? (j/n): ").lower()
+            if accept_audit == 'j':
+                selected_drug["balance"] = audit_count # Update balance to audit count
+                new_balance = audit_count # Update new_balance to audit count
+                should_log = True
+            else:
+                selected_drug["balance"] = old_balance
+                print("Uttag avbrutet, räkna om?")
+                return inventory, transactions
+        
+            # Log transaction
+            if should_log:
+                transaction = {
+                    "timestamp": timestamp,
+                    "drug": selected_drug["name"],
+                    "amount": amount_taken,
+                    "location": location,
+                    "user": hsa_id,
+                    "old_balance": old_balance,
+                    "new_balance": new_balance,}
+                transactions.append(transaction)
+                save_data(inventory, transactions)
+                # Print confirmation
+                print(f"\n✓ REGISTRERAT")
+                print(f"{selected_drug['name']}: {old_balance} → {new_balance} amp")
+                print(f"Tid: {timestamp}")
+                print(f"Till: {location}\n")
+    return inventory, transactions
 
 def save_data(inventory, transactions):
     """Save inventory and transactions to JSON files"""
@@ -153,9 +204,9 @@ authorized_users = ["HA01", "HA02", "MA15", "JK22"]
 # Load data from files (or use defaults if files don't exist)
 inventory, transactions = load_data() #list of dictionaries 
 
-user_input = input("Skriv ditt HSA-ID: ").upper()
+hsa_id = input("Skriv ditt HSA-ID: ").upper()
 
-if user_input in authorized_users:
+if hsa_id in authorized_users:
     print("Välkommen!")
     running = True
     while running:
@@ -173,57 +224,9 @@ if user_input in authorized_users:
             if choice is None:
                 continue  # Skip to the next iteration of the loop if input was aborted
             else: 
-                choice = choice - 1  # Adjust for 0-based index
-                if 0 <= choice < len(inventory):
-                    selected_drug = inventory[choice]
-                    show_drug_details(selected_drug)
-                    amount_taken = get_int_input("Antal amp att ta ut (eller Q för att avbryta): ", min_value=1, max_value=selected_drug["balance"]) # Ensure at least 1 amp is taken and not more than balance
-                
-                if amount_taken is None:
-                    continue
-                else:
-                    inventory, transactions = handle_withdrawal(inventory, transactions, hsa_id)
+                 inventory, transactions = handle_withdrawal(inventory, transactions, hsa_id, choice)
 
-                    # audit
-                    audit_count = get_int_input("Antal för kontrollräkning: ", min_value=0) # Ensure non-negative audit count
-                    should_log = False  # Flag to determine if we should log the transaction
-                    if audit_count is None:
-                        # User chose to abort
-                        selected_drug["balance"] = old_balance
-                        print("Uttag avbrutet, räkna om?")
-                        continue
-                    if new_balance == audit_count:
-                        print("✓ Kontrollräkning stämmer!")
-                        should_log = True
-                    else:
-                        print(f"⚠️ AVVIKELSE! System: {new_balance}, Räknat: {audit_count}")
-                        accept_audit = input("Acceptera avvikelse? (j/n): ").lower()
-                        if accept_audit == 'j':
-                            selected_drug["balance"] = audit_count # Update balance to audit count
-                            new_balance = audit_count # Update new_balance to audit count
-                            should_log = True
-                        else:
-                            selected_drug["balance"] = old_balance
-                            print("Uttag avbrutet, räkna om?")
-                            continue
-                        
-                    # Log transaction
-                    if should_log:
-                        transaction = {
-                            "timestamp": timestamp,
-                            "drug": selected_drug["name"],
-                            "amount": amount_taken,
-                            "location": location,
-                            "user": user_input,
-                            "old_balance": old_balance,
-                            "new_balance": new_balance,}
-                        transactions.append(transaction)
-                        save_data(inventory, transactions)
-                        # Print confirmation
-                        print(f"\n✓ REGISTRERAT")
-                        print(f"{selected_drug['name']}: {old_balance} → {new_balance} amp")
-                        print(f"Tid: {timestamp}")
-                        print(f"Till: {location}\n")
+                   
         elif menu_choice == 2:
             show_transaction_list(transactions)
         elif menu_choice == 3:
