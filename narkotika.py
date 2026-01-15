@@ -18,12 +18,12 @@ def get_int_input(prompt, min_value=None, max_value=None):
         choice = get_int_input("Choose an option (1-5): ", 1, 5)
         """
     while True:
-        hsa_id = input(prompt)
-        if hsa_id.lower() == "q":
+        user_input = input(prompt)
+        if user_input.lower() == "q":
             print("Avbryter inmatning.")
             return None
         try:
-            value: int = int(hsa_id)
+            value: int = int(user_input)
             if min_value is not None and value < min_value:
                 print(f"Värdet måste vara minst {min_value}. Försök igen.")
                 continue
@@ -36,8 +36,14 @@ def get_int_input(prompt, min_value=None, max_value=None):
             # print(f"Inmatat värde: {value}") # for debugging
             return value
         
-def handle_withdrawal(inventory, transactions, hsa_id, choice):
+def handle_withdrawal(inventory, transactions, user_input, choice):
     """Handle the withdrawal process including updating balances and logging."""
+    show_drug_list(inventory)
+    choice = get_int_input(f"Välj preparat (1 - {len(inventory)}) eller Q för att avbryta: ", 1, len(inventory))
+            
+    if choice is None:
+        return inventory, transactions  # Skip to the next iteration of the loop if input was aborted
+
     choice = choice - 1  # Adjust for 0-based index
 
     if 0 <= choice < len(inventory):
@@ -83,7 +89,7 @@ def handle_withdrawal(inventory, transactions, hsa_id, choice):
                 "drug": selected_drug["name"],
                 "amount": amount_taken,
                 "location": location,
-                "user": hsa_id,
+                "user": user_input,
                 "old_balance": old_balance,
                 "new_balance": new_balance,}
             transactions.append(transaction)
@@ -204,9 +210,9 @@ authorized_users = ["HA01", "HA02", "MA15", "JK22"]
 # Load data from files (or use defaults if files don't exist)
 inventory, transactions = load_data() #list of dictionaries 
 
-hsa_id = input("Skriv ditt HSA-ID: ").upper()
+user_input = input("Skriv ditt HSA-ID: ").upper()
 
-if hsa_id in authorized_users:
+if user_input in authorized_users:
     print("Välkommen!")
     running = True
     while running:
@@ -218,15 +224,8 @@ if hsa_id in authorized_users:
 
         menu_choice = get_int_input("Välj: ", 1, 4) # Ensure valid menu choice between 1 and 4
         if menu_choice == 1:
-            show_drug_list(inventory)
-            choice = get_int_input(f"Välj preparat (1 - {len(inventory)}) eller Q för att avbryta: ", 1, len(inventory))
-            
-            if choice is None:
-                continue  # Skip to the next iteration of the loop if input was aborted
-            else: 
-                 inventory, transactions = handle_withdrawal(inventory, transactions, hsa_id, choice)
-
-                   
+            inventory, transactions = handle_withdrawal(inventory, transactions, user_input, None) # Pass inventory and transactions to the function and get updated values back
+           
         elif menu_choice == 2:
             show_transaction_list(transactions)
         elif menu_choice == 3:

@@ -66,7 +66,7 @@ def withdraw_drugs():
 #	           "drug": selected_drug["name"],
 #	           "amount": amount_taken,
 #	           "location": location,
-#	           "user": hsa_id,
+#	           "user": user_input,
 #	           "old_balance": old_balance,
 #	           "new_balance": new_balance,}
 #        transactions.append(transaction)
@@ -89,9 +89,9 @@ drugs = [
 
 transactions = []
 
-hsa_id = input("Skriv ditt HSA-ID: ").upper()
+user_input = input("Skriv ditt HSA-ID: ").upper()
 
-if hsa_id in authorized_users:
+if user_input in authorized_users:
 	print("Välkommen!")
 	running = True
 	while running:
@@ -147,7 +147,7 @@ if hsa_id in authorized_users:
 							"drug": selected_drug["name"],
 							"amount": amount_taken,
 							"location": location,
-							"user": hsa_id,
+							"user": user_input,
 							"old_balance": old_balance,
 							"new_balance": new_balance,}
 						transactions.append(transaction)
