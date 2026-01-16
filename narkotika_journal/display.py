@@ -1,8 +1,10 @@
+from models import Drug
+
 def show_drug_list(inventory):
     """Display all inventory with their numbers"""
     print("\n=== TILLGÄNGLIGA PREPARAT ===")
     for index, drug in enumerate(inventory, start=1): # start=1 to number from 1 instead of 0
-        print(f"{index}. {drug['name']} {drug['concentration']} - {drug['balance']} amp")
+        print(f"{index}. {drug.name} {drug.concentration} - {drug.balance} amp")
     print()
 
 

@@ -2,6 +2,7 @@ from datetime import datetime
 from display import show_drug_list, show_drug_details
 from data import save_data, load_data
 from utils import get_int_input
+from models import Drug
 
 def handle_withdrawal(inventory, transactions, user_input):
     """Handle the withdrawal process including updating balances and logging."""
@@ -16,7 +17,7 @@ def handle_withdrawal(inventory, transactions, user_input):
     if 0 <= choice < len(inventory):
         selected_drug = inventory[choice]
         show_drug_details(selected_drug)
-        amount_taken = get_int_input("Antal amp att ta ut (eller Q för att avbryta): ", min_value=1, max_value=selected_drug["balance"]) # Ensure at least 1 amp is taken and not more than balance
+        amount_taken = get_int_input("Antal amp att ta ut (eller Q för att avbryta): ", min_value=1, max_value=selected_drug.balance) # Ensure at least 1 amp is taken and not more than balance
     
         if amount_taken is None:
             return inventory, transactions
@@ -31,7 +32,7 @@ def handle_withdrawal(inventory, transactions, user_input):
         should_log = False  # Flag to determine if we should log the transaction
         if audit_count is None:
             # User chose to abort
-            selected_drug["balance"] = old_balance
+            selected_drug.balance = old_balance
             print("Uttag avbrutet, räkna om?")
             return inventory, transactions
         if new_balance == audit_count:
@@ -41,11 +42,11 @@ def handle_withdrawal(inventory, transactions, user_input):
             print(f"⚠️ AVVIKELSE! System: {new_balance}, Räknat: {audit_count}")
             accept_audit = input("Acceptera avvikelse? (j/n): ").lower()
             if accept_audit == 'j':
-                selected_drug["balance"] = audit_count # Update balance to audit count
+                selected_drug.balance = audit_count # Update balance to audit count
                 new_balance = audit_count # Update new_balance to audit count
                 should_log = True
             else:
-                selected_drug["balance"] = old_balance
+                selected_drug.balance = old_balance
                 print("Uttag avbrutet, räkna om?")
                 return inventory, transactions
         

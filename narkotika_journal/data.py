@@ -1,6 +1,6 @@
 import json
 import os
-
+from models import Drug
 def save_data(inventory, transactions):
     """Save inventory and transactions to JSON files"""
     with open("inventory.json", "w") as d: # open file for writing
@@ -22,12 +22,12 @@ def save_data(inventory, transactions):
 def load_data():
     """Load inventory and transactions from JSON files"""
     DEFAULT_INVENTORY = [
-            {"name": "Fentanyl", "concentration": "50 μg/ml", "balance": 36},
-            {"name": "Sufentanil", "concentration": "5 μg/ml", "balance": 23},
-            {"name": "Ketalar", "concentration": "50 mg/ml", "balance": 8},
-            {"name": "Morfin", "concentration": "10 mg/ml", "balance": 24},
-            {"name": "Remifentanil", "concentration": "5 mg", "balance": 15},
-            {"name": "Remifentanil", "concentration": "2mg", "balance": 26},
+            Drug("Fentanyl", "50 μg/ml", 36),
+            Drug("Sufentanil", "5 μg/ml", 23),
+            Drug("Ketalar", "50 mg/ml", 8),
+            Drug("Morfin", "10 mg/ml", 24),
+            Drug("Remifentanil", "5 mg", 15),
+            Drug("Remifentanil", "2mg", 26),
         ]
     # Load inventory
     if os.path.exists("inventory.json"):
