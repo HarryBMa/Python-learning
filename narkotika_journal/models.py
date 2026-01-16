@@ -13,7 +13,7 @@ class Drug:
         """Return a string representation of the Drug instance.
         This lets you print the object in a readable format."""
         return f"{self.name} ({self.concentration}) - {self.balance} amp"
-
+      
     def withdraw(self, amount):
         """Withdraw amount from balance. Returns True if successful."""
         if amount > self.balance:
@@ -28,4 +28,32 @@ class Drug:
             print(f"Fel: Kan inte sätta in ett negativt belopp: {amount} amp.")
             return False
         self.balance += amount
-        return True        
+        return True   
+
+    def to_dict(self):
+        """Convert the Drug instance to a dictionary."""
+        return {
+                "name": self.name,
+                "concentration": self.concentration,
+                "balance": self.balance
+                }
+    #@staticmethod
+    #def from_dict(drug_dict): # Doesn't need self or cls
+      #  """Create a Drug instance from a dictionary.
+      #  
+      #  This is a STATIC method, not an instance method.
+      #  - 'self' is NOT passed automatically
+      #  - Can be called without having a Drug object first
+      #  - Usage: Drug.from_dict(some_dict)
+      # """
+      # return Drug(drug_dict["name"], drug_dict["concentration"], drug_dict["balance"])
+    @classmethod
+    def from_dict(cls, drug_dict):
+        """Create a Drug instance from a dictionary.
+        
+        This is a CLASS method, not an instance method.
+        - 'cls' represents the Drug class itself
+        - Can be called without having a Drug object first
+        - Usage: Drug.from_dict(some_dict)
+        """
+        return cls(drug_dict["name"], drug_dict["concentration"], drug_dict["balance"])

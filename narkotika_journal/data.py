@@ -1,6 +1,7 @@
 import json
 import os
 from models import Drug
+
 def save_data(inventory, transactions):
     """Save inventory and transactions to JSON files"""
     with open("inventory.json", "w") as d: # open file for writing
@@ -33,7 +34,7 @@ def load_data():
     if os.path.exists("inventory.json"):
         try:
             with open("inventory.json", "r") as d: # open file for reading
-                inventory = json.load(d)   # read inventory from file in JSON format (load=read)
+                inventory = [Drug.from_dict(drug_dict) for drug_dict in json.load(d)]   # read inventory from file in JSON format (load=read)
         except json.JSONDecodeError:
             print("Gick inte att läsa från fil: återställer till standardvärden")
             inventory = DEFAULT_INVENTORY

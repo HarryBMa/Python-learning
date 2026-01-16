@@ -26,7 +26,7 @@ def show_drug_details(drug):
     """Display selected drug details"""
     print(f"""
 --- VALT PREPARAT ---
-Namn: {drug['name']}
-Koncentration: {drug['concentration']}
-Saldo: {drug['balance']} ampuller
+Namn: {drug.name}
+Koncentration: {drug.concentration}
+Saldo: {drug.balance} ampuller
 """)
