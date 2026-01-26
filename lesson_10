@@ -1,0 +1,355 @@
+# 🎯 Lesson 10: Exception Handling
+
+Welcome to one of the most practical lessons in your Python journey! Exception handling is how we write **robust, professional code** that doesn't crash when something goes wrong.
+
+---
+
+## 🏥 Why This Matters in Healthcare
+
+Imagine your narcotic inventory system in production:
+- A user enters "five" instead of 5 for quantity
+- The JSON file gets corrupted mid-write
+- Someone tries to withdraw 50ml of Fentanyl when only 10ml exists
+- A new drug entry is missing the required schedule field
+
+**Without exception handling:** Your program crashes, loses data, and creates chaos in the OR.  
+**With exception handling:** Your program catches the error, logs it, shows a helpful message, and continues safely.
+
+This is the difference between **student code** and **production code**.
+
+---
+
+## 🧠 The Core Concept
+
+Think of exceptions like **adverse events in anesthesia**:
+
+1. **Monitor for problems** (`try`) - You're watching vitals
+2. **Respond to specific issues** (`except`) - Hypotension? Give vasopressor. Hypoxia? Check ventilator.
+3. **Always do this regardless** (`finally`) - Document everything, even if the case went perfectly
+4. **Success path** (`else`) - Patient stable? Continue with the plan.
+
+---
+
+## 📖 The Syntax
+
+```python
+try:
+    # Code that might cause an error
+    risky_operation()
+except SpecificError:
+    # Handle that specific problem
+    handle_it()
+except AnotherError as e:
+    # Handle a different problem, access error details with 'e'
+    print(f"Problem: {e}")
+else:
+    # Only runs if NO exceptions occurred
+    print("Everything went smoothly!")
+finally:
+    # ALWAYS runs, even if there was an error
+    cleanup()
+```
+
+---
+
+## 🔍 Common Built-in Exceptions
+
+| Exception | When It Happens | Healthcare Example |
+|-----------|-----------------|-------------------|
+| `ValueError` | Wrong type of value | User enters "ten" instead of 10 |
+| `KeyError` | Dictionary key doesn't exist | Looking for drug "Fentany1" (typo) |
+| `FileNotFoundError` | File doesn't exist | `inventory.json` was deleted |
+| `IndexError` | List index out of range | Accessing `drugs[100]` when list has 10 items |
+| `ZeroDivisionError` | Dividing by zero | Calculating per-case usage when cases = 0 |
+| `TypeError` | Wrong data type | Adding string + int |
+| `AttributeError` | Object has no attribute | Calling `drug.price` when Drug has no price attribute |
+
+---
+
+## 🏗️ Example: Safe User Input
+
+**Before (crashes on bad input):**
+```python
+quantity = int(input("Enter quantity: "))  # User types "five" → CRASH!
+```
+
+**After (handles bad input gracefully):**
+```python
+try:
+    quantity = int(input("Enter quantity: "))
+except ValueError:
+    print("❌ Please enter a number, not text!")
+    quantity = 0  # Safe default
+```
+
+---
+
+## 🏥 Example: Safe File Operations
+
+```python
+def load_inventory():
+    try:
+        with open("inventory.json", "r") as f:
+            return json.load(f)
+    except FileNotFoundError:
+        print("⚠️  No inventory file found. Creating new inventory...")
+        return []  # Start fresh
+    except json.JSONDecodeError:
+        print("❌ Inventory file is corrupted!")
+        # Maybe load backup, or start fresh
+        return []
+```
+
+---
+
+## 🎯 Multiple Exceptions
+
+You can catch different errors and respond differently:
+
+```python
+def withdraw_drug(drug_name, amount):
+    try:
+        drug = inventory[drug_name]  # Might raise KeyError
+        new_balance = drug['balance'] - amount
+        
+        if new_balance < 0:
+            raise ValueError("Insufficient stock!")  # We create this error!
+        
+        drug['balance'] = new_balance
+        
+    except KeyError:
+        print(f"❌ Drug '{drug_name}' not found in inventory")
+    except ValueError as e:
+        print(f"❌ Withdrawal failed: {e}")
+    else:
+        print(f"✅ Withdrew {amount}ml of {drug_name}")
+    finally:
+        save_inventory()  # ALWAYS save, even if withdrawal failed
+```
+
+---
+
+## 🚀 Creating Custom Exceptions
+
+For healthcare-specific errors:
+
+```python
+class InsufficientStockError(Exception):
+    """Raised when trying to withdraw more than available"""
+    pass
+
+class InvalidScheduleError(Exception):
+    """Raised when drug schedule is not I, II, III, IV, or V"""
+    pass
+
+class ExpiredDrugError(Exception):
+    """Raised when trying to use an expired medication"""
+    pass
+
+# Usage:
+def validate_schedule(schedule):
+    valid_schedules = ["I", "II", "III", "IV", "V"]
+    if schedule not in valid_schedules:
+        raise InvalidScheduleError(f"Schedule must be one of {valid_schedules}")
+```
+
+---
+
+## 🎓 Best Practices
+
+1. **Be Specific** - Catch specific exceptions, not generic `except:` (too broad)
+2. **Fail Gracefully** - Don't hide errors silently; inform the user
+3. **Log Critical Errors** - In production, you need audit trails
+4. **Don't Overuse** - Not every line needs try/except; use where failures are likely
+5. **Clean Up Resources** - Use `finally` for closing files, saving data, etc.
+
+---
+
+## ❌ What NOT to Do
+
+```python
+# DON'T: Catch everything and ignore it
+try:
+    # Some code
+    pass
+except:
+    pass  # Silent failure = debugging nightmare!
+
+# DON'T: Catch too broadly
+try:
+    result = complex_calculation()
+except Exception:
+    print("Something went wrong!")  # What went wrong? Where? Why?
+```
+
+---
+
+## 🧪 Your Mission: Make Your Inventory System Bulletproof
+
+### **Core Task: Add Exception Handling Throughout**
+
+I want you to go through your **entire narcotic inventory system** and add proper exception handling. Here's where:
+
+#### **1. User Input Validation**
+- When asking for quantities (must be positive integers)
+- When asking for drug names
+- When asking for HSA-ID
+- When selecting menu options
+
+#### **2. File Operations**
+- Loading `inventory.json`
+- Saving `inventory.json`
+- Loading `transactions.json`
+
+#### **3. Drug Operations**
+- Withdrawing drugs (insufficient stock)
+- Adding drugs (validating schedule, name, balance)
+- Finding drugs by name
+
+#### **4. Create Custom Exceptions**
+Create at least these three:
+```python
+class InsufficientStockError(Exception):
+    pass
+
+class InvalidScheduleError(Exception):
+    pass
+
+class InvalidHSAIDError(Exception):
+    pass
+```
+
+---
+
+### **Success Criteria**
+
+Your program should:
+- ✅ **Never crash** - handle all reasonable bad inputs gracefully
+- ✅ Show **helpful error messages** - not just "error occurred"
+- ✅ **Always save data** - use `finally` blocks for critical operations
+- ✅ Use **custom exceptions** - for healthcare-specific validation
+- ✅ **Log errors** - print what went wrong so you can debug
+
+---
+
+### **Example Scenarios to Handle**
+
+Test your system with these:
+
+1. **User enters text when asked for number**
+   ```
+   Enter quantity to withdraw: five
+   ❌ Invalid input. Please enter a number.
+   ```
+
+2. **User tries to withdraw more than available**
+   ```
+   Enter amount: 50
+   ❌ Insufficient stock! Only 10.0ml available.
+   ```
+
+3. **User enters invalid drug name**
+   ```
+   Enter drug name: Fentanylll
+   ❌ Drug 'Fentanylll' not found in inventory.
+   ```
+
+4. **Corrupted inventory.json**
+   ```
+   ⚠️  Inventory file corrupted. Starting fresh inventory.
+   ```
+
+5. **User enters invalid menu choice**
+   ```
+   Enter choice: 99
+   ❌ Invalid choice. Please enter 1-5.
+   ```
+
+---
+
+### 🎁 **Bonus Challenges** (Optional)
+
+1. **Retry Logic**: If user enters bad input, give them 3 chances before returning to menu
+2. **Backup System**: Before saving, create `inventory_backup.json` in case save fails
+3. **Error Logging**: Write errors to `error_log.txt` with timestamps
+4. **Validation Function**: Create a `validate_positive_number()` function you can reuse everywhere
+
+---
+
+## 💭 Think About
+
+Before you start coding:
+
+1. **Where in your current code could things go wrong?**
+   - User input?
+   - File operations?
+   - Math operations (division by zero)?
+   - Dictionary lookups?
+
+2. **What should happen when each error occurs?**
+   - Show message and retry?
+   - Show message and return to menu?
+   - Log it and continue?
+   - Create backup and try again?
+
+3. **Which operations must ALWAYS complete?**
+   - Saving data?
+   - Logging transactions?
+   - Closing files?
+
+---
+
+## 🚦 Getting Started
+
+Here's a skeleton to get you thinking (don't just copy this - adapt it to your code):
+
+```python
+def withdraw_drug():
+    """Handle drug withdrawal with full error handling"""
+    try:
+        # Get drug name (what could go wrong here?)
+        drug_name = input("Enter drug name: ").strip()
+        
+        # Find drug in inventory (what could go wrong here?)
+        # ...
+        
+        # Get withdrawal amount (what could go wrong here?)
+        # ...
+        
+        # Check sufficient stock (what could go wrong here?)
+        # ...
+        
+        # Update balance
+        # ...
+        
+    except ValueError as e:
+        # Handle value errors
+        print(f"❌ Invalid input: {e}")
+    except KeyError:
+        # Handle missing drug
+        print(f"❌ Drug '{drug_name}' not found")
+    except InsufficientStockError as e:
+        # Handle insufficient stock
+        print(f"❌ {e}")
+    else:
+        # Only if everything succeeded
+        print("✅ Withdrawal successful!")
+    finally:
+        # ALWAYS do this
+        save_inventory()
+```
+
+---
+
+## 📝 Submission
+
+When you're done:
+1. Show me your exception handling approach for **one function** (pick your favorite)
+2. Tell me: **What was the hardest error to handle? Why?**
+3. Test your system with bad inputs - **what breaks it now?** (There's always something!)
+
+---
+
+**Remember:** The goal isn't to make code that *never* has errors. The goal is to make code that **handles errors gracefully** and keeps your OR running safely.
+
+Good luck! 💪 Start with the user input validation - that's where most errors happen!
