@@ -2,7 +2,7 @@
     {
         "name": "Fentanyl",
         "concentration": "50 \u03bcg/ml",
-        "balance": 34,
+        "balance": 32,
         "minimum_stock_level": 10,
         "schedule": "II",
         "logging_requirements": "Log required"

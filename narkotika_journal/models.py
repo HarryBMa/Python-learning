@@ -87,32 +87,3 @@ class ControlledSubstance(Medication):
             drug_dict["schedule"],
             drug_dict["logging_requirements"]
         )
-
-
-# ===== OLD Drug class - kept for reference =====
-    def from_dict(cls, drug_dict):
-        """Create a Drug instance from a dictionary.
-        
-        This is a CLASS method, not an instance method.
-        - 'cls' represents the Drug class itself
-        - Can be called without having a Drug object first
-        - Usage: Drug.from_dict(some_dict)
-        """
-        return cls(drug_dict["name"], drug_dict["concentration"], drug_dict["balance"])
-
-class Drug:
-    """A class representing a narcotics classed drug in the inventory. """
-    def __init__(self, name, concentration, balance):
-        """Initialize a Drug instance with name, concentration, and balance.
-        this runs when you create a new create a new Drug object.
-        It sets up the attributes of the object.
-        """
-        self.name = name
-        self.concentration = concentration
-        self.balance = balance
-
-    def __str__(self):
-        """Return a string representation of the Drug instance.
-        This lets you print the object in a readable format."""
-        return f"{self.name} ({self.concentration}) - {self.balance} amp"
-      

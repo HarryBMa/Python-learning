@@ -2,7 +2,7 @@ from datetime import datetime
 from display import show_drug_list, show_drug_details
 from data import save_data, load_data
 from utils import get_int_input
-from models import Drug
+from models import ControlledSubstance
 
 def handle_withdrawal(inventory, transactions, user_input):
     """Handle the withdrawal process including updating balances and logging."""

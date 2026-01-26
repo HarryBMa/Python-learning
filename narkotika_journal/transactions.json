@@ -7,5 +7,14 @@
         "user": "HA01",
         "old_balance": 36,
         "new_balance": 34
+    },
+    {
+        "timestamp": "2026-01-26 09:40",
+        "drug": "Fentanyl",
+        "amount": 2,
+        "location": "kollo",
+        "user": "HA01",
+        "old_balance": 34,
+        "new_balance": 32
     }
 ]
