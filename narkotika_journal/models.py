@@ -20,8 +20,7 @@ class Medication:
         if not isinstance(other, Medication):
             return NotImplemented
         return (self.name == other.name and
-                self.concentration == other.concentration
-
+                self.concentration == other.concentration)
     
     def __lt__(self, other):
         """Sorting medications by alphabetical order of name."""
