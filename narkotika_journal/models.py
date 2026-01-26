@@ -20,7 +20,7 @@ class Medication:
         if not isinstance(other, Medication):
             return NotImplemented
         return (self.name == other.name and
-                self.concentration == other.concentration and
+                self.concentration == other.concentration
 
     
     def __lt__(self, other):
