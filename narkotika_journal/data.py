@@ -1,18 +1,22 @@
 import json
 import os
-from models import Drug
-
+from models import ControlledSubstance
+# Get the directory where THIS script is located
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+INVENTORY_FILE = os.path.join(SCRIPT_DIR, "inventory.json")
+TRANSACTIONS_FILE = os.path.join(SCRIPT_DIR, "transactions.json")
 def save_data(inventory, transactions):
     """Save inventory and transactions to JSON files"""
-    with open("inventory.json", "w") as d: # open file for writing
-        try:
-            json.dump(inventory, d, indent=4) # write inventory to file in JSON format
-        except PermissionError:
-            print("Gick inte att spara till fil: Ingen behörighet")
-        except OSError as e:
-            print(f"Ett fel uppstod vid sparning av inventory.json: {e}")
+    try:
+        with open(INVENTORY_FILE, "w") as d: # open file for writing
+            inventory = [drug.to_dict() for drug in inventory] # write inventory to file in JSON format
+            json.dump(inventory, d, indent=4)
+    except PermissionError:
+        print("Gick inte att spara till fil: Ingen behörighet")
+    except OSError as e:
+        print(f"Ett fel uppstod vid sparning av inventory.json: {e}")
             
-    with open("transactions.json", "w") as t: # open file for writing
+    with open(TRANSACTIONS_FILE, "w") as t: # open file for writing
         try:
             json.dump(transactions, t, indent=4) # write transactions to file in JSON format (dump=write)
         except PermissionError:
@@ -23,18 +27,18 @@ def save_data(inventory, transactions):
 def load_data():
     """Load inventory and transactions from JSON files"""
     DEFAULT_INVENTORY = [
-            Drug("Fentanyl", "50 μg/ml", 36),
-            Drug("Sufentanil", "5 μg/ml", 23),
-            Drug("Ketalar", "50 mg/ml", 8),
-            Drug("Morfin", "10 mg/ml", 24),
-            Drug("Remifentanil", "5 mg", 15),
-            Drug("Remifentanil", "2mg", 26),
+            ControlledSubstance("Fentanyl", "50 μg/ml", 36, 10, "II", "Log required"),
+            ControlledSubstance("Sufentanil", "5 μg/ml", 23, 10, "II", "Log required"),
+            ControlledSubstance("Ketalar", "50 mg/ml", 8, 10, "II", "Log required"),
+            ControlledSubstance("Morfin", "10 mg/ml", 24, 10, "II", "Log required"),
+            ControlledSubstance("Remifentanil", "5 mg", 15, 10, "II", "Log required"),
+            ControlledSubstance("Remifentanil", "2mg", 26, 10, "II", "Log required"),
         ]
     # Load inventory
-    if os.path.exists("inventory.json"):
+    if os.path.exists(INVENTORY_FILE):
         try:
-            with open("inventory.json", "r") as d: # open file for reading
-                inventory = [Drug.from_dict(drug_dict) for drug_dict in json.load(d)]   # read inventory from file in JSON format (load=read)
+            with open(INVENTORY_FILE, "r") as d: # open file for reading
+                inventory = [ControlledSubstance.from_dict(drug_dict) for drug_dict in json.load(d)]   # read inventory from file in JSON format (load=read)
         except json.JSONDecodeError:
             print("Gick inte att läsa från fil: återställer till standardvärden")
             inventory = DEFAULT_INVENTORY
@@ -50,9 +54,9 @@ def load_data():
         inventory = DEFAULT_INVENTORY
             
     # Load transactions
-    if os.path.exists("transactions.json"):
+    if os.path.exists(TRANSACTIONS_FILE):
         try:
-            with open("transactions.json", "r") as t:
+            with open(TRANSACTIONS_FILE, "r") as t:
                 transactions = json.load(t)
         except json.JSONDecodeError:
             print("Gick inte att läsa från fil: återställer till standardvärden")

@@ -1,47 +1,11 @@
 [
     {
-        "timestamp": "2026-01-15 20:17",
-        "drug": "Fentanyl",
-        "amount": 3,
-        "location": "hs",
-        "user": "HA01",
-        "old_balance": 36,
-        "new_balance": 33
-    },
-    {
-        "timestamp": "2026-01-15 20:31",
-        "drug": "Fentanyl",
-        "amount": 3,
-        "location": "ha",
-        "user": "HA01",
-        "old_balance": 33,
-        "new_balance": 30
-    },
-    {
-        "timestamp": "2026-01-15 20:37",
-        "drug": "Fentanyl",
-        "amount": 1,
-        "location": "vxzv",
-        "user": "HA01",
-        "old_balance": 30,
-        "new_balance": 29
-    },
-    {
-        "timestamp": "2026-01-15 21:19",
+        "timestamp": "2026-01-19 15:27",
         "drug": "Fentanyl",
         "amount": 2,
-        "location": "38",
+        "location": "eric",
         "user": "HA01",
-        "old_balance": 40,
-        "new_balance": 38
-    },
-    {
-        "timestamp": "2026-01-15 22:13",
-        "drug": "Fentanyl",
-        "amount": 3,
-        "location": "kollo",
-        "user": "HA01",
-        "old_balance": 38,
-        "new_balance": 35
+        "old_balance": 36,
+        "new_balance": 34
     }
 ]

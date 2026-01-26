@@ -2,31 +2,49 @@
     {
         "name": "Fentanyl",
         "concentration": "50 \u03bcg/ml",
-        "balance": 35
+        "balance": 34,
+        "minimum_stock_level": 10,
+        "schedule": "II",
+        "logging_requirements": "Log required"
     },
     {
         "name": "Sufentanil",
         "concentration": "5 \u03bcg/ml",
-        "balance": 23
+        "balance": 23,
+        "minimum_stock_level": 10,
+        "schedule": "II",
+        "logging_requirements": "Log required"
     },
     {
         "name": "Ketalar",
         "concentration": "50 mg/ml",
-        "balance": 10
+        "balance": 8,
+        "minimum_stock_level": 10,
+        "schedule": "II",
+        "logging_requirements": "Log required"
     },
     {
         "name": "Morfin",
         "concentration": "10 mg/ml",
-        "balance": 24
+        "balance": 24,
+        "minimum_stock_level": 10,
+        "schedule": "II",
+        "logging_requirements": "Log required"
     },
     {
         "name": "Remifentanil",
         "concentration": "5 mg",
-        "balance": 15
+        "balance": 15,
+        "minimum_stock_level": 10,
+        "schedule": "II",
+        "logging_requirements": "Log required"
     },
     {
         "name": "Remifentanil",
         "concentration": "2mg",
-        "balance": 26
+        "balance": 26,
+        "minimum_stock_level": 10,
+        "schedule": "II",
+        "logging_requirements": "Log required"
     }
 ]

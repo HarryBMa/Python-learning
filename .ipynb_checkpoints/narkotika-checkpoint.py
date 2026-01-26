@@ -57,13 +57,13 @@ Saldo: {drug['balance']} ampuller
 
 def withdraw_drugs():
     """Withdraw input amount from selected drug"""
-  #  old_balance = selected_drug["balance"]
-#    selected_drug["balance"] -= amount_taken
+  #  old_balance = selected_drug.balance
+#    selected_drug.balance -= amount_taken
 #    if old_balance > 0:
-#        new_balance = selected_drug["balance"]
+#        new_balance = selected_drug.balance
 #        transaction = {
 #	           "timestamp": timestamp,
-#	           "drug": selected_drug["name"],
+#	           "drug": selected_drug.name,
 #	           "amount": amount_taken,
 #	           "location": location,
 #	           "user": user_input,
@@ -111,16 +111,16 @@ if user_input in authorized_users:
 				show_drug_details(selected_drug)
 				amount_taken = int(input("Antal amp att ta ut: "))
 			
-				if amount_taken > selected_drug["balance"]:
+				if amount_taken > selected_drug.balance:
 					print(f"Uttag för stort! Det finns bara {selected_drug['balance']} amp kvar.")
 			
 				else:
 					# withdraw_drugs
 					timestamp = datetime.now().strftime("%Y-%m-%d %H:%M")
-					old_balance = selected_drug["balance"]
-					selected_drug["balance"] -= amount_taken
+					old_balance = selected_drug.balance
+					selected_drug.balance -= amount_taken
 					location = str(input("till: "))
-					new_balance = selected_drug["balance"]
+					new_balance = selected_drug.balance
 					
 					# audit
 					audit_count = int(input("Antal för kontrollräkning: "))
@@ -133,18 +133,18 @@ if user_input in authorized_users:
 						print(f"⚠️ AVVIKELSE! System: {new_balance}, Räknat: {audit_count}")
 						accept_audit = input("Acceptera avvikelse? (j/n): ").lower()
 						if accept_audit == 'j':
-							selected_drug["balance"] = audit_count
+							selected_drug.balance = audit_count
 							new_balance = audit_count
 							should_log = True
 						else:
-							selected_drug["balance"] = old_balance
+							selected_drug.balance = old_balance
 							print("Uttag avbrutet, räkna om?")
 					
 					# Log transaction
 					if should_log:    
 						transaction = {
 							"timestamp": timestamp,
-							"drug": selected_drug["name"],
+							"drug": selected_drug.name,
 							"amount": amount_taken,
 							"location": location,
 							"user": user_input,
@@ -166,7 +166,7 @@ if user_input in authorized_users:
 				selected_drug = drugs[choice]
 				show_drug_details(selected_drug)
 				amount_added = int(input("Antal amp att lägga till: "))
-				selected_drug["balance"] += amount_added
+				selected_drug.balance += amount_added
 				save_data(drugs, transactions)
 				print(f"{selected_drug['name']} har uppdaterats till {selected_drug['balance']} amp.")
 		elif menu_choice == "4":

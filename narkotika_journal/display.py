@@ -1,4 +1,4 @@
-from models import Drug
+from models import ControlledSubstance
 
 def show_drug_list(inventory):
     """Display all inventory with their numbers"""

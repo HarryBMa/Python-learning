@@ -85,7 +85,7 @@ def handle_deposit(inventory, transactions):
             if amount_added is None:
                 return inventory, transactions  # Skip to the next iteration of the loop if input was aborted
             else:
-                selected_drug.balance += amount_added
+                selected_drug.deposit(amount_added) # Add the specified amount
                 save_data(inventory, transactions)
                 print(f"{selected_drug.name} har uppdaterats till {selected_drug.balance} amp.")
                 return inventory, transactions
