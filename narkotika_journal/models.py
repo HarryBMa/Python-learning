@@ -21,28 +21,14 @@ class Medication:
             return NotImplemented
         return (self.name == other.name and
                 self.concentration == other.concentration and
-                self.balance == other.balance and
-                self.minimum_stock_level == other.minimum_stock_level)
+
     
     def __lt__(self, other):
         """Sorting medications by alphabetical order of name."""
         if not isinstance(other, Medication):
             return NotImplemented
         return self.name < other.name
-
-
-class ControlledSubstance(Medication):
-    """A subclass representing a controlled substance medication."""
-    def __init__(self, name, concentration, balance, minimum_stock_level, schedule, logging_requirements):
-        """Initialize a ControlledSubstance instance with additional attributes."""
-        super().__init__(name, concentration, balance, minimum_stock_level)
-        self.schedule = schedule
-        self.logging_requirements = logging_requirements
-    
-    def __repr__(self):
-        """Return an unambiguous string representation of the ControlledSubstance instance."""
-        return f"ControlledSubstance(name={self.name}, concentration={self.concentration}, balance={self.balance}, minimum_stock_level={self.minimum_stock_level}, schedule={self.schedule}, logging_requirements={self.logging_requirements})"
-    
+  
     def withdraw(self, amount):
         """Withdraw amount from balance. Returns True if successful."""
         if amount > self.balance:
@@ -59,6 +45,20 @@ class ControlledSubstance(Medication):
         self.balance += amount
         return True   
   
+
+
+class ControlledSubstance(Medication):
+    """A subclass representing a controlled substance medication."""
+    def __init__(self, name, concentration, balance, minimum_stock_level, schedule, logging_requirements):
+        """Initialize a ControlledSubstance instance with additional attributes."""
+        super().__init__(name, concentration, balance, minimum_stock_level)
+        self.schedule = schedule
+        self.logging_requirements = logging_requirements
+    
+    def __repr__(self):
+        """Return an unambiguous string representation of the ControlledSubstance instance."""
+        return f"ControlledSubstance(name={self.name}, concentration={self.concentration}, balance={self.balance}, minimum_stock_level={self.minimum_stock_level}, schedule={self.schedule}, logging_requirements={self.logging_requirements})"
+
     def to_dict(self):
         """Convert the ControlledSubstance instance to a dictionary."""
         return {
